@@ -52,5 +52,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ksv90/decorators.git"
+  },
+  "peerDependencies": {
+    "valibot": "^0.34.0"
   }
 }
