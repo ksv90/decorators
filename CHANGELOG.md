@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/ksv90/decorators/compare/v0.0.1...v0.0.2) (2024-06-26)
+
+
+### Bug Fixes
+
+* http connector created ([ee2bdca](https://github.com/ksv90/decorators/commit/ee2bdca5af63e652093526c00654c7ed095a77c7))
+
 ## 0.0.1 (2024-06-21)
 
 
