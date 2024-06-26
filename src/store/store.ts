@@ -7,17 +7,7 @@ export const Store = <TStore extends object, TConstructor extends Constructor>(
 ): ClassDecorator<TConstructor, TConstructor & Constructor<IStore<TStore>>> => {
   return (Target) => {
     abstract class StoreMixin extends Target implements IStore<TStore> {
-      #store: TStore;
-
-      // ! open issue https://github.com/microsoft/TypeScript/issues/37142
-      // constructor(...args: ConstructorParameters<TConstructor>)
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      constructor(...args: any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        super(...args);
-        this.#store = { ...store };
-      }
+      #store = { ...store };
 
       get<TKey extends keyof TStore>(key: TKey): TStore[TKey] {
         if (key in this.#store) return this.#store[key];
