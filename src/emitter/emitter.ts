@@ -32,7 +32,7 @@ export const Emitter = <TEvents extends object, TConstructor extends Constructor
         return !!listeners && listeners.has(listener);
       }
 
-      emit<TName extends keyof TEvents>(name: TName, data: TEvents[TName]): void {
+      emit<TName extends keyof TEvents, TData extends TEvents[TName]>(name: TName, data: TData): void {
         const listeners = this.#listenerMap.get(name);
         listeners?.forEach((options, listener, map) => {
           if (options?.once) map.delete(listener);
