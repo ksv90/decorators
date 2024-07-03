@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/ksv90/decorators/compare/v0.0.4...v0.0.5) (2024-07-03)
+
+
+### Bug Fixes
+
+* setter added to server url params ([30eeadd](https://github.com/ksv90/decorators/commit/30eeaddf20c46b026fb6d9b87b3d03eb53de0da3))
+
 ## [0.0.4](https://github.com/ksv90/decorators/compare/v0.0.3...v0.0.4) (2024-07-03)
 
 
