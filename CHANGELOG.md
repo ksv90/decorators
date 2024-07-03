@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/ksv90/decorators/compare/v0.0.2...v0.0.3) (2024-07-03)
+
+
+### Bug Fixes
+
+* dynamic emit data ([11c6cae](https://github.com/ksv90/decorators/commit/11c6cae92ca194b52e7a97f0b3d623a3d38790ed))
+
 ## [0.0.2](https://github.com/ksv90/decorators/compare/v0.0.1...v0.0.2) (2024-06-26)
 
 
