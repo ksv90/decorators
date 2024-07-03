@@ -15,7 +15,7 @@ export interface IEmitter<TEvents extends object> {
   hasListener<TName extends keyof TEvents>(name: TName, listener: Listener<TEvents[TName]>): boolean;
 
   /** @protected */
-  emit<TName extends keyof TEvents>(name: TName, data: TEvents[TName]): void;
+  emit<TName extends keyof TEvents, TData extends TEvents[TName]>(name: TName, data: TData): void;
 
   /** @protected */
   removeListenersByName<TName extends keyof TEvents>(name: TName): void;
