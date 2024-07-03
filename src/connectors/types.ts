@@ -7,6 +7,7 @@ export interface HttpConnectorOptions {
 
 export interface IHttpConnector {
   get url(): string;
+  set url(value: string);
   get token(): string | undefined;
   set token(value: string | undefined);
   request(path: string, init?: globalThis.RequestInit): Promise<globalThis.Response>;
