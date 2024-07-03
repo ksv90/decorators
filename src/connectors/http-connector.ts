@@ -5,13 +5,13 @@ import { HttpConnectorOptions, IHttpConnector } from './types';
 import { getMessageError } from './utils';
 
 export const HttpConnector = <TConstructor extends Constructor>(
-  options: HttpConnectorOptions,
+  options?: HttpConnectorOptions,
 ): ClassDecorator<TConstructor, TConstructor & Constructor<IHttpConnector>> => {
   return (Target) => {
     abstract class HttpConnectorMixin extends Target implements IHttpConnector {
-      public url = options.url;
+      public url = options?.url ?? '';
 
-      public token = options.token;
+      public token = options?.token;
 
       request(path: string, init?: RequestInit): Promise<Response> {
         const pathNormalize = path.startsWith('/') ? path : `/${path}`;

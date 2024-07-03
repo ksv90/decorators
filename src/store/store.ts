@@ -2,12 +2,12 @@ import { ClassDecorator, Constructor } from '../types';
 import { IStore, StoreOptions } from './types';
 
 export const Store = <TStore extends object, TConstructor extends Constructor>(
-  store: TStore,
+  store?: TStore,
   options?: StoreOptions,
 ): ClassDecorator<TConstructor, TConstructor & Constructor<IStore<TStore>>> => {
   return (Target) => {
     abstract class StoreMixin extends Target implements IStore<TStore> {
-      #store = { ...store };
+      #store = store ? { ...store } : ({} as TStore);
 
       get<TKey extends keyof TStore>(key: TKey): TStore[TKey] {
         if (key in this.#store) return this.#store[key];
