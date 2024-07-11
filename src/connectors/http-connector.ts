@@ -1,5 +1,3 @@
-import { BaseIssue, BaseSchema, parse } from 'valibot';
-
 import { ClassDecorator, Constructor } from '../types';
 import { HttpConnectorOptions, IHttpConnector } from './types';
 import { getMessageError } from './utils';
@@ -11,36 +9,31 @@ export const HttpConnector = <TConstructor extends Constructor>(
     abstract class HttpConnectorMixin extends Target implements IHttpConnector {
       public url = options?.url ?? '';
 
-      public token = options?.token;
-
-      request(path: string, init?: RequestInit): Promise<Response> {
-        const pathNormalize = path.startsWith('/') ? path : `/${path}`;
-        return globalThis.fetch(`${this.url}${pathNormalize}`, init);
+      async request(input: string, init?: globalThis.RequestInit): Promise<globalThis.Response> {
+        if (!globalThis.navigator.onLine) {
+          throw new Error('connection lost');
+        }
+        let inputNormalize;
+        if (!this.url) inputNormalize = input;
+        else if (input.startsWith('/')) inputNormalize = input;
+        else inputNormalize = `/${input}`;
+        const response = await globalThis.fetch(`${this.url}${inputNormalize}`, init);
+        return response;
       }
 
-      send(path: string, method: string, body: object | null): Promise<Response> {
-        return this.request(path, {
+      async send(input: string, method: string, body: object | null): Promise<globalThis.Response> {
+        const response = await this.request(input, {
           method,
           body: body && JSON.stringify(body),
-          headers: this.getHeaders(path, method, body),
+          headers: this.createHeaders?.(input, method, body),
         });
+        if (response.ok) return response;
+        const errorData = (await response.json()) as unknown;
+        const message = getMessageError(errorData);
+        throw new Error(message);
       }
 
-      async post<TData>(path: string, body: object | null, schema?: BaseSchema<TData, TData, BaseIssue<unknown>>): Promise<TData | void> {
-        const response = await this.send(path, 'POST', body);
-        const data = (await response.json()) as unknown;
-        if (!response.ok) {
-          const message = getMessageError(data);
-          throw new Error(message);
-        }
-        if (schema) return parse(schema, data);
-      }
-
-      getHeaders(_path: string, _method: string, _body: object | null): HeadersInit {
-        const headers: HeadersInit = { 'Content-Type': 'application/json' };
-        if (this.token) headers.Authorization = `Bearer ${this.token}`;
-        return headers;
-      }
+      createHeaders?(input: string, method: string, body: object | null): globalThis.HeadersInit;
     }
 
     return HttpConnectorMixin;
