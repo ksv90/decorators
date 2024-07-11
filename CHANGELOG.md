@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/ksv90/decorators/compare/v0.0.5...v0.0.6) (2024-07-11)
+
+
+### Bug Fixes
+
+* store and connector fixed ([4dd9839](https://github.com/ksv90/decorators/commit/4dd9839d548c837e68b4f74928f6b39c5c5a5cf1))
+
 ## [0.0.5](https://github.com/ksv90/decorators/compare/v0.0.4...v0.0.5) (2024-07-03)
 
 
