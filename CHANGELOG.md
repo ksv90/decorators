@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/ksv90/decorators/compare/v0.0.6...v0.0.7) (2024-07-15)
+
+
+### Bug Fixes
+
+* broadcaster created ([108911a](https://github.com/ksv90/decorators/commit/108911a5ea0070bff65537b35c8543d567d5109e))
+
 ## [0.0.6](https://github.com/ksv90/decorators/compare/v0.0.5...v0.0.6) (2024-07-11)
 
 
