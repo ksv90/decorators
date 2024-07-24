@@ -10,6 +10,14 @@ export const Broadcaster = <TEvents extends object, TConstructor extends Constru
 
       readonly #broadcastChannel = new BroadcastChannel(name);
 
+      readonly #listener = (ctx: { data: { event: keyof TEvents; data: unknown } }) => {
+        const { event, data } = ctx.data;
+        const subscribers = this.#subscriberMap.get(event);
+        subscribers?.forEach((subscriber) => {
+          subscriber(data);
+        });
+      };
+
       // ! open issue https://github.com/microsoft/TypeScript/issues/37142
       // constructor(...args: ConstructorParameters<TConstructor>)
 
@@ -18,13 +26,7 @@ export const Broadcaster = <TEvents extends object, TConstructor extends Constru
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         super(...args);
 
-        this.#broadcastChannel.addEventListener('message', (ctx: MessageEvent<{ event: keyof TEvents; data: unknown }>) => {
-          const { event, data } = ctx.data;
-          const subscribers = this.#subscriberMap.get(event);
-          subscribers?.forEach((subscriber) => {
-            subscriber(data);
-          });
-        });
+        this.#broadcastChannel.addEventListener('message', this.#listener);
       }
 
       subscribe<TEvent extends keyof TEvents>(event: TEvent, subscriber: Subscriber<TEvents[TEvent]>): void {
@@ -43,6 +45,13 @@ export const Broadcaster = <TEvents extends object, TConstructor extends Constru
 
       publish<TEvent extends keyof TEvents, TData extends TEvents[TEvent]>(event: TEvent, data: TData): void {
         this.#broadcastChannel.postMessage({ event, data });
+        this.#listener({ data: { event, data } });
+      }
+
+      closeBroadcastChannel(): void {
+        this.#subscriberMap.clear();
+        this.#broadcastChannel.removeEventListener('message', this.#listener);
+        this.#broadcastChannel.close();
       }
     }
 
