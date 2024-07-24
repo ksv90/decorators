@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8](https://github.com/ksv90/decorators/compare/v0.0.7...v0.0.8) (2024-07-24)
+
+
+### Bug Fixes
+
+* broadcaster changed ([13b886a](https://github.com/ksv90/decorators/commit/13b886a13d4d41e889a0487f7cfbfec7b8d7be01))
+
 ## [0.0.7](https://github.com/ksv90/decorators/compare/v0.0.6...v0.0.7) (2024-07-15)
 
 
