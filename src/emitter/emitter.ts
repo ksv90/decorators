@@ -1,6 +1,8 @@
 import { ClassDecorator, Constructor } from '../types';
 import { EventMap, IEmitter, IListenerOptions, Listener, ListenerMap, ListenerPriority } from './types';
 
+//
+
 export const Emitter = <TEvents extends EventMap<TEvents>, TConstructor extends Constructor>(): ClassDecorator<
   TConstructor,
   TConstructor & Constructor<IEmitter<TEvents>>
