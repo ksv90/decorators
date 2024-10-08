@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/ksv90/decorators/compare/v0.0.8...v0.1.0) (2024-10-08)
+
+
+### Features
+
+* emitter interfaces changed ([e4dd1b6](https://github.com/ksv90/decorators/commit/e4dd1b69d3a99817230221e729739667467e5634))
+
 ## [0.0.8](https://github.com/ksv90/decorators/compare/v0.0.7...v0.0.8) (2024-07-24)
 
 
