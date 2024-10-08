@@ -10,7 +10,7 @@ runs:
         run_install: false
         dest: ~/.pnpm
 
-    - run: echo ${{PNPM_HOME}}
+    - run: echo ${{ env.PNPM_HOME }}
       shell: bash
 
     - name: Cache pnpm-home
