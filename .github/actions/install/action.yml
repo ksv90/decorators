@@ -10,9 +10,6 @@ runs:
         run_install: false
         dest: ~/.pnpm
 
-    - run: echo ${{ env.PNPM_HOME }}
-      shell: bash
-
     - name: Cache pnpm-home
       uses: actions/cache@v4
       id: pnpm-home
