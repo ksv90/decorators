@@ -7,4 +7,4 @@ export * from './store';
 export * from './types';
 
 // eslint-disable-next-line no-console
-console.log('test 2');
+console.log('test 3');
