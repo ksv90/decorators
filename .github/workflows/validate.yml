@@ -27,7 +27,14 @@ jobs:
     # if: ${{ needs.changes-check.outputs.src == 'true' || needs.changes-check.outputs.deps == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo $needs
+      - run: |
+          echo "Needed jobs: $needs"
+          echo "The following jobs need to be completed before this one can start:"
+          if [[ "$needs" != "" ]] ; then
+            for neededJob in $needs ; do
+              echo "- $neededJob"
+            done
+          fi
       # - uses: actions/checkout@v4
       # - uses: ./.github/actions/install
       # - run: pnpm lint
