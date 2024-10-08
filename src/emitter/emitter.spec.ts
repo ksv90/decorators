@@ -4,9 +4,9 @@ import { Emitter } from './emitter';
 import { IEmitter } from './types';
 
 interface TestEmitterEvents {
-  eventOne: string;
-  eventTwo: number;
-  eventThree: { eventDataOne: string; eventDataTwo: number };
+  eventOne: [string];
+  eventTwo: [number];
+  eventThree: [{ eventDataOne: string; eventDataTwo: number }];
 }
 
 interface TestEmitter extends IEmitter<TestEmitterEvents> {}
@@ -49,7 +49,7 @@ describe('Emitter', () => {
 
   it<Context>('должен быть удален после вызова с once опцией', ({ testEmitter }) => {
     const listener = () => undefined;
-    testEmitter.on('eventOne', listener, { once: true });
+    testEmitter.addListener('eventOne', listener, { once: true });
     expect(testEmitter.hasListener('eventOne', listener)).toBe(true);
     testEmitter.emit('eventOne', '');
     expect(testEmitter.hasListener('eventOne', listener)).toBe(false);
