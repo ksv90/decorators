@@ -13,8 +13,8 @@ jobs:
       src: ${{ steps.changes-check.outputs.changes.src }}
       deps: ${{ steps.changes-check.outputs.changes.deps }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         id: changes-check
         with:
           filters: |
@@ -27,6 +27,6 @@ jobs:
     if: ${{ needs.changes-check.outputs.src == 'true' || needs.changes-check.outputs.deps == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install
       - run: pnpm lint
