@@ -15,14 +15,14 @@ runs:
       id: pnpm-home
       with:
         path: ${{ env.PNPM_HOME }}
-        key: pnpm-home-${{ hashFiles('.npmrc') }}
+        key: pnpm-home
 
     - name: Cache node_modules
       uses: actions/cache@v4
       id: node-modules
       with:
         path: node_modules
-        key: node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+        key: node-modules
 
     - name: Set github config
       run: pnpm config set '//npm.pkg.github.com/:_authToken' "${NODE_AUTH_TOKEN}"
@@ -33,6 +33,5 @@ runs:
       shell: bash
 
     - name: Install dependencies
-      if: steps.node-modules.outputs.cache-hit != 'true'
       run: pnpm install --frozen-lockfile
       shell: bash
