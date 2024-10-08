@@ -4,24 +4,24 @@ description: Install dependencies and pnpm cache
 runs:
   using: composite
   steps:
-    - uses: pnpm/action-setup@v3
+    - uses: pnpm/action-setup@v4
       with:
         standalone: true
         run_install: false
-        # dest: ~/.pnpm
+        dest: ~/.pnpm
 
     - run: echo ${{PNPM_HOME}}
       shell: bash
 
     - name: Cache pnpm-home
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: pnpm-home
       with:
         path: ${{ env.PNPM_HOME }}
         key: pnpm-home-${{ hashFiles('.npmrc') }}
 
     - name: Cache node_modules
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: node-modules
       with:
         path: node_modules
@@ -36,6 +36,6 @@ runs:
       shell: bash
 
     - name: Install dependencies
-      if: steps.node-modules.cache-hit != 'true'
+      if: steps.node-modules.outputs.cache-hit != 'true'
       run: pnpm install --frozen-lockfile
       shell: bash
