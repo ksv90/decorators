@@ -8,6 +8,10 @@ runs:
       with:
         standalone: true
         run_install: false
+        # dest: ~/.pnpm
+
+    - run: echo ${{PNPM_HOME}}
+      shell: bash
 
     - name: Cache pnpm-home
       uses: actions/cache@v3
