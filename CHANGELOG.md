@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/ksv90/decorators/compare/v0.1.1...v0.1.2) (2024-10-08)
+
+
+### Bug Fixes
+
+* test ([#21](https://github.com/ksv90/decorators/issues/21)) ([4240b20](https://github.com/ksv90/decorators/commit/4240b20e3b79f92a07261a4dc69770b337cfbdbd))
+
 ## [0.1.1](https://github.com/ksv90/decorators/compare/v0.1.0...v0.1.1) (2024-10-08)
 
 
