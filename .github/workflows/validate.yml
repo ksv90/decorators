@@ -27,7 +27,7 @@ jobs:
     # if: ${{ needs.changes-check.outputs.src == 'true' || needs.changes-check.outputs.deps == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${needs.changes-check.outputs.src}
+      - run: echo ${{needs.changes-check.outputs.src}}
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install
       - run: pnpm lint
