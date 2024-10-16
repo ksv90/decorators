@@ -18,7 +18,7 @@ export const Broadcaster = <TEvents extends object, TConstructor extends Constru
         });
       };
 
-      // ! open issue https://github.com/microsoft/TypeScript/issues/37142
+      // open issue https://github.com/microsoft/TypeScript/issues/37142
       // constructor(...args: ConstructorParameters<TConstructor>)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
