@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Emitter } from './emitter';
-import { IEmitter } from './types';
+import { Emitter } from '../emitter';
+import { IEmitter } from '../types';
 
 interface TestEmitterEvents {
   eventOne: [string];
