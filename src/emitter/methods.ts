@@ -15,7 +15,7 @@ export function addListener<TEvents extends EventMap<TEvents>, TEmitter extends 
   this: TEmitter,
   eventName: TEventName,
   listener: Listener<TEvents[TEventName]>,
-  options?: IListenerOptions,
+  options?: IListenerOptions<TEvents[TEventName]>,
 ): TEmitter {
   const listenerPriorityMap = getCurrentEmitterMap(this);
   const priority = options?.priority ?? 'medium';
@@ -30,7 +30,7 @@ export function addListener<TEvents extends EventMap<TEvents>, TEmitter extends 
       }
     } else {
       if (!listeners) {
-        listeners = new Map<Listener<TEvents[TEventName]>, IListenerOptions>();
+        listeners = new Map<Listener<TEvents[TEventName]>, IListenerOptions<TEvents[TEventName]>>();
         listenerMap.set(eventName, listeners);
       }
       listeners.set(listener, options);
@@ -68,6 +68,7 @@ export function emit<TEvents extends EventMap<TEvents>, TEmitter extends IEmitte
       listenerPriority.forEach((listenerMap, listenerEventName) => {
         if (listenerEventName !== eventName) return;
         listenerMap.forEach((options, listener) => {
+          if (!(options?.cond?.(...args) ?? true)) return;
           hasListener = true;
           if (options?.once) {
             listenerMap.delete(listener);
@@ -137,7 +138,7 @@ export function on<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<
   this: TEmitter,
   eventName: TEventName,
   listener: Listener<TEvents[TEventName]>,
-  options?: Omit<IListenerOptions, 'once'>,
+  options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
 ): TEmitter {
   return this.addListener(eventName, listener, { ...options, once: false });
 }
@@ -146,7 +147,7 @@ export function once<TEvents extends EventMap<TEvents>, TEmitter extends IEmitte
   this: TEmitter,
   eventName: TEventName,
   listener: Listener<TEvents[TEventName]>,
-  options?: Omit<IListenerOptions, 'once'>,
+  options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
 ): TEmitter {
   return this.addListener(eventName, listener, { ...options, once: true });
 }
