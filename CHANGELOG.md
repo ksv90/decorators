@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/ksv90/decorators/compare/v0.1.4...v0.2.0) (2024-10-17)
+
+
+### Features
+
+* store renomed to storer ([0166baa](https://github.com/ksv90/decorators/commit/0166baa314578556a066d0c604350750283dc563))
+
 ## [0.1.4](https://github.com/ksv90/decorators/compare/v0.1.3...v0.1.4) (2024-10-17)
 
 
