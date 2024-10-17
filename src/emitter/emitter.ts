@@ -25,7 +25,9 @@ export const Emitter = <TEvents extends EventMap<TEvents>, TConstructor extends 
       constructor(...args: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         super(...args);
-        emitterMap.set(this, new Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>());
+        if (!emitterMap.has(this)) {
+          emitterMap.set(this, new Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>());
+        }
       }
     }
 

@@ -2,13 +2,22 @@ import { EventMap, IEmitter, IListenerOptions, Listener, ListenerMap, ListenerPr
 
 export const emitterMap = new WeakMap<object, unknown>();
 
+function getCurrentEmitterMap<TEvents extends EventMap<TEvents>>(target: IEmitter<TEvents>): Map<ListenerPriority, Map<keyof TEvents, ListenerMap>> {
+  let listenerPriorityMap = emitterMap.get(target) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>> | undefined;
+  if (!listenerPriorityMap) {
+    listenerPriorityMap = new Map();
+    emitterMap.set(target, listenerPriorityMap);
+  }
+  return listenerPriorityMap;
+}
+
 export function addListener<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
   listener: Listener<TEvents[TEventName]>,
   options?: IListenerOptions,
 ): TEmitter {
-  const listenerPriorityMap = emitterMap.get(this) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>;
+  const listenerPriorityMap = getCurrentEmitterMap(this);
   const priority = options?.priority ?? 'medium';
   if (!listenerPriorityMap.has(priority)) listenerPriorityMap.set(priority, new Map());
   listenerPriorityMap.forEach((listenerMap, listenerPriority) => {
@@ -35,7 +44,7 @@ export function removeListener<TEvents extends EventMap<TEvents>, TEmitter exten
   eventName: TEventName,
   listener: Listener<TEvents[TEventName]>,
 ): TEmitter {
-  const listenerPriorityMap = emitterMap.get(this) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>;
+  const listenerPriorityMap = getCurrentEmitterMap(this);
   listenerPriorityMap.forEach((listenerMap, listenerPriority, map) => {
     const listeners = listenerMap.get(eventName);
     if (!listeners) return;
@@ -51,7 +60,7 @@ export function emit<TEvents extends EventMap<TEvents>, TEmitter extends IEmitte
   eventName: TEventName,
   ...args: TEvents[TEventName]
 ): boolean {
-  const listenerPriorityMap = emitterMap.get(this) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>;
+  const listenerPriorityMap = getCurrentEmitterMap(this);
   let hasListener = false;
   Array.from(listenerPriorityMap)
     .sort(([a], [b]) => (b === 'low' || a === 'high' ? 1 : -1))
@@ -77,7 +86,7 @@ export function hasListener<TEvents extends EventMap<TEvents>, TEmitter extends 
   eventName: TEventName,
   listener: Listener<TEvents[TEventName]>,
 ): boolean {
-  const listenerPriorityMap = emitterMap.get(this) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>;
+  const listenerPriorityMap = getCurrentEmitterMap(this);
   for (const listenerMap of listenerPriorityMap.values()) {
     const listeners = listenerMap.get(eventName);
     if (listeners?.has(listener)) return true;
@@ -89,7 +98,7 @@ export function removeAllListeners<TEvents extends EventMap<TEvents>, TEmitter e
   this: TEmitter,
   eventName?: TEventName,
 ): TEmitter {
-  const listenerPriorityMap = emitterMap.get(this) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>;
+  const listenerPriorityMap = getCurrentEmitterMap(this);
   if (eventName) {
     listenerPriorityMap.forEach((listenerMap, listenerPriority) => {
       listenerMap.delete(eventName);
@@ -105,7 +114,7 @@ export function getListenersByName<TEvents extends EventMap<TEvents>, TEmitter e
   this: TEmitter,
   eventName: TEventName,
 ): Array<Listener<TEvents[TEventName]>> {
-  const listenerPriorityMap = emitterMap.get(this) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>;
+  const listenerPriorityMap = getCurrentEmitterMap(this);
   for (const listenerMap of listenerPriorityMap.values()) {
     const listeners = listenerMap.get(eventName);
     if (listeners) return Array.from(listeners.keys());
@@ -114,7 +123,7 @@ export function getListenersByName<TEvents extends EventMap<TEvents>, TEmitter e
 }
 
 export function getEventNames<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>>(this: TEmitter): Array<keyof TEvents> {
-  const listenerPriorityMap = emitterMap.get(this) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>;
+  const listenerPriorityMap = getCurrentEmitterMap(this);
   const eventNames = new Set<keyof TEvents>();
   listenerPriorityMap.forEach((listenerMap) => {
     listenerMap.forEach((_, listenerEventName) => {
