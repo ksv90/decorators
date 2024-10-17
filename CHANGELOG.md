@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/ksv90/decorators/compare/v0.1.3...v0.1.4) (2024-10-17)
+
+
+### Bug Fixes
+
+* constructor call fixed ([5b6cdd6](https://github.com/ksv90/decorators/commit/5b6cdd6a922bc5c8d34fcb27011156074d038390))
+
 ## [0.1.3](https://github.com/ksv90/decorators/compare/v0.1.2...v0.1.3) (2024-10-16)
 
 
