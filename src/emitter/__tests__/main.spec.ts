@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { Emitter } from '../emitter';
 import { IEmitter } from '../types';
 
-describe('main', () => {
+describe('emitter main', () => {
   it('должен хранить ссылки на методы', () => {
     interface IEvents {
       balance: [];
