@@ -1,19 +1,26 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Listener<TArgs extends unknown[] = any[]> = (...args: TArgs) => void;
+export type Listener<TArgs extends unknown[]> = (...args: TArgs) => void;
+
+export type Condition<TArgs extends unknown[]> = (...args: TArgs) => boolean;
 
 export type ListenerPriority = 'low' | 'medium' | 'high';
 
 export type EventMap<TEvents> = Record<keyof TEvents, unknown[]>;
 
-export type ListenerMap = Map<Listener, IListenerOptions | undefined>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ListenerMap = Map<Listener<any>, IListenerOptions<any> | undefined>;
 
-export interface IListenerOptions {
+export interface IListenerOptions<TArgs extends unknown[]> {
   readonly once?: boolean;
   readonly priority?: ListenerPriority;
+  readonly cond?: Condition<TArgs>;
 }
 
 export interface IEmitter<TEvents extends EventMap<TEvents>> {
-  addListener<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEvents[TEventName]>, options?: IListenerOptions): this;
+  addListener<TEventName extends keyof TEvents>(
+    eventName: TEventName,
+    listener: Listener<TEvents[TEventName]>,
+    options?: IListenerOptions<TEvents[TEventName]>,
+  ): this;
   removeListener<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEvents[TEventName]>): this;
   hasListener<TEventName extends keyof TEvents>(name: TEventName, listener: Listener<TEvents[TEventName]>): boolean;
   emit<TEventName extends keyof TEvents>(eventName: TEventName, ...args: TEvents[TEventName]): boolean;
@@ -23,12 +30,12 @@ export interface IEmitter<TEvents extends EventMap<TEvents>> {
   on<TEventName extends keyof TEvents>(
     eventName: TEventName,
     listener: Listener<TEvents[TEventName]>,
-    options?: Omit<IListenerOptions, 'once'>,
+    options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
   ): this;
   once<TEventName extends keyof TEvents>(
     eventName: TEventName,
     listener: Listener<TEvents[TEventName]>,
-    options?: Omit<IListenerOptions, 'once'>,
+    options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
   ): this;
   off<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEvents[TEventName]>): this;
 }
