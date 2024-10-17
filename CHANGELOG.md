@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/ksv90/decorators/compare/v0.2.0...v0.3.0) (2024-10-17)
+
+
+### Features
+
+* coundition func added to emitter ([257a89f](https://github.com/ksv90/decorators/commit/257a89f675c4606e6c636b36a7bcd6200ef01dd2))
+
+
+### Bug Fixes
+
+* tests added for storer ([395da33](https://github.com/ksv90/decorators/commit/395da337425083fdc2565f280294b20c8918f833))
+
 ## [0.2.0](https://github.com/ksv90/decorators/compare/v0.1.4...v0.2.0) (2024-10-17)
 
 
