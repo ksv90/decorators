@@ -131,4 +131,19 @@ describe('storer advanced', () => {
     expect(storage.get('balance')).toBe(balance + 1);
     expect(storage.get('currency')).toBe(currency);
   });
+
+  it('должен иметь общие функции на прототипе', () => {
+    interface Storage1 extends IStorer<Store> {}
+    @Storer()
+    class Storage1 {}
+    const storage1 = new Storage1();
+    interface Storage2 extends IStorer<Store> {}
+    @Storer()
+    class Storage2 {}
+    const storage2 = new Storage2();
+    expect(void storage1.get).toEqual(void storage2.get);
+    expect(void storage1.set).toEqual(void storage2.set);
+    expect(void storage1.has).toEqual(void storage2.has);
+    expect(void storage1.remove).toEqual(void storage2.remove);
+  });
 });

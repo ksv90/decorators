@@ -87,4 +87,19 @@ describe('emitter main', () => {
     expect(spy1).toHaveBeenCalled();
     expect(spy2).toHaveBeenCalled();
   });
+
+  it('должен иметь общие функции на прототипе', () => {
+    interface IEvents {}
+    interface EventEmitter1 extends IEmitter<IEvents> {}
+    @Emitter()
+    class EventEmitter1 {}
+    const emitter1 = new EventEmitter1();
+    interface EventEmitter2 extends IEmitter<IEvents> {}
+    @Emitter()
+    class EventEmitter2 {}
+    const emitter2 = new EventEmitter2();
+    expect(void emitter1.addListener).toEqual(void emitter2.addListener);
+    expect(void emitter1.removeListener).toEqual(void emitter2.removeListener);
+    expect(void emitter1.emit).toEqual(void emitter2.emit);
+  });
 });
