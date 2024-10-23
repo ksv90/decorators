@@ -22,6 +22,8 @@ export const Storer = <TStore extends object, TConstructor extends Constructor>(
     storerPrototype.has = has;
     storerPrototype.remove = remove;
 
+    Object.defineProperty(StorerMixin, 'name', { value: Target.name });
+
     return StorerMixin;
   };
 };
