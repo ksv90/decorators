@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/ksv90/decorators/compare/v0.3.1...v0.3.2) (2024-10-23)
+
+
+### Bug Fixes
+
+* constructor name changed to target name ([742c8c4](https://github.com/ksv90/decorators/commit/742c8c483b4cfd42abfa8681e7089a846be467d2))
+
 ## [0.3.1](https://github.com/ksv90/decorators/compare/v0.3.0...v0.3.1) (2024-10-17)
 
 
