@@ -123,4 +123,91 @@ describe('Emitter', () => {
     expect(testOne).toBeTypeOf('string');
     expect(testTwo).toBeTypeOf('number');
   });
+
+  it<Context>('должен вызвать обработчики в порядке добавления', ({ testEmitter }) => {
+    let value = 2;
+    testEmitter.on('eventTwo', (data) => (value += data));
+    testEmitter.on('eventTwo', (data) => (value *= data));
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+  });
+
+  it<Context>('должен вызвать обработчики по приоритету', ({ testEmitter }) => {
+    let value = 2;
+    const clear = () => {
+      testEmitter.removeAllListeners();
+      value = 2;
+    };
+
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'low' });
+    testEmitter.on('eventTwo', (data) => (value *= data));
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(6);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'low' });
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'medium' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(6);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'low' });
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'high' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(6);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'medium' });
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'high' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(6);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data));
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'high' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(6);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'medium' });
+    testEmitter.on('eventTwo', (data) => (value *= data));
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'high' });
+    testEmitter.on('eventTwo', (data) => (value *= data));
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data));
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'low' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data));
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'medium' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'medium' });
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'low' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'high' });
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'low' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+
+    clear();
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'high' });
+    testEmitter.on('eventTwo', (data) => (value *= data), { priority: 'medium' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+  });
 });

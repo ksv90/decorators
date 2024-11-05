@@ -1,9 +1,14 @@
-import { EventMap, IEmitter, IListenerOptions, Listener, ListenerMap, ListenerPriority } from './types';
+import { emitterMap, HIGH_PRIORITY, LOW_PRIORITY, MEDIUM_PRIORITY } from './constants';
+import { EventMap, IEmitter, IListenerOptions, Listener, ListenerPriority } from './types';
 
-export const emitterMap = new WeakMap<object, unknown>();
+type ListenerMap<TEventName extends PropertyKey, TData extends unknown[]> = Map<Listener<TEventName, TData>, IListenerOptions<TData> | undefined>;
 
-function getCurrentEmitterMap<TEvents extends EventMap<TEvents>>(target: IEmitter<TEvents>): Map<ListenerPriority, Map<keyof TEvents, ListenerMap>> {
-  let listenerPriorityMap = emitterMap.get(target) as Map<ListenerPriority, Map<keyof TEvents, ListenerMap>> | undefined;
+type EventNameMap<TEventName extends PropertyKey, TData extends unknown[]> = Map<TEventName, ListenerMap<TEventName, TData>>;
+
+type PriorityMap<TEventName extends PropertyKey, TData extends unknown[]> = Map<ListenerPriority, EventNameMap<TEventName, TData>>;
+
+function getCurrentEmitterMap<TEvents extends EventMap<TEvents>>(target: IEmitter<TEvents>): PriorityMap<keyof TEvents, TEvents[keyof TEvents]> {
+  let listenerPriorityMap = emitterMap.get(target) as PriorityMap<keyof TEvents, TEvents[keyof TEvents]> | undefined;
   if (!listenerPriorityMap) {
     listenerPriorityMap = new Map();
     emitterMap.set(target, listenerPriorityMap);
@@ -14,14 +19,14 @@ function getCurrentEmitterMap<TEvents extends EventMap<TEvents>>(target: IEmitte
 export function addListener<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-  listener: Listener<TEvents[TEventName]>,
+  listener: Listener<TEventName, TEvents[TEventName]>,
   options?: IListenerOptions<TEvents[TEventName]>,
 ): TEmitter {
   const listenerPriorityMap = getCurrentEmitterMap(this);
-  const priority = options?.priority ?? 'medium';
+  const priority = options?.priority ?? MEDIUM_PRIORITY;
   if (!listenerPriorityMap.has(priority)) listenerPriorityMap.set(priority, new Map());
   listenerPriorityMap.forEach((listenerMap, listenerPriority) => {
-    let listeners = listenerMap.get(eventName);
+    let listeners = listenerMap.get(eventName) as ListenerMap<TEventName, TEvents[TEventName]> | undefined;
     if (listenerPriority !== priority) {
       if (listeners) {
         listeners.delete(listener);
@@ -30,8 +35,8 @@ export function addListener<TEvents extends EventMap<TEvents>, TEmitter extends 
       }
     } else {
       if (!listeners) {
-        listeners = new Map<Listener<TEvents[TEventName]>, IListenerOptions<TEvents[TEventName]>>();
-        listenerMap.set(eventName, listeners);
+        listeners = new Map();
+        listenerMap.set(eventName, listeners as ListenerMap<keyof TEvents, TEvents[keyof TEvents]>);
       }
       listeners.set(listener, options);
     }
@@ -42,11 +47,11 @@ export function addListener<TEvents extends EventMap<TEvents>, TEmitter extends 
 export function removeListener<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-  listener: Listener<TEvents[TEventName]>,
+  listener: Listener<TEventName, TEvents[TEventName]>,
 ): TEmitter {
   const listenerPriorityMap = getCurrentEmitterMap(this);
   listenerPriorityMap.forEach((listenerMap, listenerPriority, map) => {
-    const listeners = listenerMap.get(eventName);
+    const listeners = listenerMap.get(eventName) as ListenerMap<TEventName, TEvents[TEventName]> | undefined;
     if (!listeners) return;
     listeners.delete(listener);
     if (!listeners.size) listenerMap.delete(eventName);
@@ -58,24 +63,24 @@ export function removeListener<TEvents extends EventMap<TEvents>, TEmitter exten
 export function emit<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-  ...args: TEvents[TEventName]
+  ...data: TEvents[TEventName]
 ): boolean {
   const listenerPriorityMap = getCurrentEmitterMap(this);
   let hasListener = false;
   Array.from(listenerPriorityMap)
-    .sort(([a], [b]) => (b === 'low' || a === 'high' ? 1 : -1))
+    .sort(([a], [b]) => (a === LOW_PRIORITY || b === HIGH_PRIORITY ? 1 : -1))
     .forEach(([priority, listenerPriority]) => {
       listenerPriority.forEach((listenerMap, listenerEventName) => {
         if (listenerEventName !== eventName) return;
         listenerMap.forEach((options, listener) => {
-          if (!(options?.cond?.(...args) ?? true)) return;
+          if (!(options?.cond?.(...data) ?? true)) return;
           hasListener = true;
           if (options?.once) {
             listenerMap.delete(listener);
             if (!listenerMap.size) listenerPriority.delete(listenerEventName);
             if (!listenerPriority.size) listenerPriorityMap.delete(priority);
           }
-          listener(...args);
+          listener(...data, { eventName, listener, priority });
         });
       });
     });
@@ -85,19 +90,19 @@ export function emit<TEvents extends EventMap<TEvents>, TEmitter extends IEmitte
 export function hasListener<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-  listener: Listener<TEvents[TEventName]>,
+  listener: Listener<TEventName, TEvents[TEventName]>,
 ): boolean {
   const listenerPriorityMap = getCurrentEmitterMap(this);
   for (const listenerMap of listenerPriorityMap.values()) {
-    const listeners = listenerMap.get(eventName);
+    const listeners = listenerMap.get(eventName) as ListenerMap<TEventName, TEvents[TEventName]> | undefined;
     if (listeners?.has(listener)) return true;
   }
   return false;
 }
 
-export function removeAllListeners<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
+export function removeAllListeners<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>>(
   this: TEmitter,
-  eventName?: TEventName,
+  eventName?: keyof TEvents,
 ): TEmitter {
   const listenerPriorityMap = getCurrentEmitterMap(this);
   if (eventName) {
@@ -114,7 +119,7 @@ export function removeAllListeners<TEvents extends EventMap<TEvents>, TEmitter e
 export function getListenersByName<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-): Array<Listener<TEvents[TEventName]>> {
+): Array<Listener<TEventName, TEvents[TEventName]>> {
   const listenerPriorityMap = getCurrentEmitterMap(this);
   for (const listenerMap of listenerPriorityMap.values()) {
     const listeners = listenerMap.get(eventName);
@@ -137,7 +142,7 @@ export function getEventNames<TEvents extends EventMap<TEvents>, TEmitter extend
 export function on<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-  listener: Listener<TEvents[TEventName]>,
+  listener: Listener<TEventName, TEvents[TEventName]>,
   options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
 ): TEmitter {
   return this.addListener(eventName, listener, { ...options, once: false });
@@ -146,7 +151,7 @@ export function on<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<
 export function once<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-  listener: Listener<TEvents[TEventName]>,
+  listener: Listener<TEventName, TEvents[TEventName]>,
   options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
 ): TEmitter {
   return this.addListener(eventName, listener, { ...options, once: true });
@@ -155,7 +160,7 @@ export function once<TEvents extends EventMap<TEvents>, TEmitter extends IEmitte
 export function off<TEvents extends EventMap<TEvents>, TEmitter extends IEmitter<TEvents>, TEventName extends keyof TEvents>(
   this: TEmitter,
   eventName: TEventName,
-  listener: Listener<TEvents[TEventName]>,
+  listener: Listener<TEventName, TEvents[TEventName]>,
 ): TEmitter {
   return this.removeListener(eventName, listener);
 }
