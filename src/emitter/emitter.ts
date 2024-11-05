@@ -1,18 +1,7 @@
 import { ClassDecorator, Constructor } from '../types';
-import {
-  addListener,
-  emit,
-  emitterMap,
-  getEventNames,
-  getListenersByName,
-  hasListener,
-  off,
-  on,
-  once,
-  removeAllListeners,
-  removeListener,
-} from './methods';
-import { EventMap, IEmitter, ListenerMap, ListenerPriority } from './types';
+import { emitterMap } from './constants';
+import { addListener, emit, getEventNames, getListenersByName, hasListener, off, on, once, removeAllListeners, removeListener } from './methods';
+import { EventMap, IEmitter } from './types';
 
 export const Emitter = <TEvents extends EventMap<TEvents>, TConstructor extends Constructor>(): ClassDecorator<
   TConstructor,
@@ -26,7 +15,7 @@ export const Emitter = <TEvents extends EventMap<TEvents>, TConstructor extends 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         super(...args);
         if (!emitterMap.has(this)) {
-          emitterMap.set(this, new Map<ListenerPriority, Map<keyof TEvents, ListenerMap>>());
+          emitterMap.set(this, new Map());
         }
       }
     }

@@ -1,41 +1,46 @@
-export type Listener<TArgs extends unknown[]> = (...args: TArgs) => void;
+import { HIGH_PRIORITY, LOW_PRIORITY, MEDIUM_PRIORITY } from './constants';
 
-export type Condition<TArgs extends unknown[]> = (...args: TArgs) => boolean;
+export type ListenerPriority = typeof LOW_PRIORITY | typeof MEDIUM_PRIORITY | typeof HIGH_PRIORITY;
 
-export type ListenerPriority = 'low' | 'medium' | 'high';
+export type ListenerEvent<TEventName extends PropertyKey, TData extends unknown[]> = {
+  eventName: TEventName;
+  listener: Listener<TEventName, TData>;
+  priority: ListenerPriority;
+};
+
+export type Listener<TEventName extends PropertyKey, TData extends unknown[]> = (...eventData: [...TData, ListenerEvent<TEventName, TData>]) => void;
+
+export type Condition<TData extends unknown[]> = (...data: TData) => boolean;
 
 export type EventMap<TEvents> = Record<keyof TEvents, unknown[]>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ListenerMap = Map<Listener<any>, IListenerOptions<any> | undefined>;
-
-export interface IListenerOptions<TArgs extends unknown[]> {
+export interface IListenerOptions<TData extends unknown[]> {
   readonly once?: boolean;
   readonly priority?: ListenerPriority;
-  readonly cond?: Condition<TArgs>;
+  readonly cond?: Condition<TData>;
 }
 
 export interface IEmitter<TEvents extends EventMap<TEvents>> {
   addListener<TEventName extends keyof TEvents>(
     eventName: TEventName,
-    listener: Listener<TEvents[TEventName]>,
+    listener: Listener<TEventName, TEvents[TEventName]>,
     options?: IListenerOptions<TEvents[TEventName]>,
   ): this;
-  removeListener<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEvents[TEventName]>): this;
-  hasListener<TEventName extends keyof TEvents>(name: TEventName, listener: Listener<TEvents[TEventName]>): boolean;
+  removeListener<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEventName, TEvents[TEventName]>): this;
+  hasListener<TEventName extends keyof TEvents>(name: TEventName, listener: Listener<TEventName, TEvents[TEventName]>): boolean;
   emit<TEventName extends keyof TEvents>(eventName: TEventName, ...args: TEvents[TEventName]): boolean;
-  removeAllListeners<TEventName extends keyof TEvents>(eventName?: TEventName): this;
-  getListenersByName<TEventName extends keyof TEvents>(eventName: TEventName): Array<Listener<TEvents[TEventName]>>;
+  removeAllListeners(eventName?: keyof TEvents): this;
+  getListenersByName<TEventName extends keyof TEvents>(eventName: TEventName): Array<Listener<TEventName, TEvents[TEventName]>>;
   getEventNames(): Array<keyof TEvents>;
   on<TEventName extends keyof TEvents>(
     eventName: TEventName,
-    listener: Listener<TEvents[TEventName]>,
+    listener: Listener<TEventName, TEvents[TEventName]>,
     options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
   ): this;
   once<TEventName extends keyof TEvents>(
     eventName: TEventName,
-    listener: Listener<TEvents[TEventName]>,
+    listener: Listener<TEventName, TEvents[TEventName]>,
     options?: Omit<IListenerOptions<TEvents[TEventName]>, 'once'>,
   ): this;
-  off<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEvents[TEventName]>): this;
+  off<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEventName, TEvents[TEventName]>): this;
 }
