@@ -7,5 +7,5 @@ export interface IBroadcaster<TEvents extends object> {
   unsubscribe<TEvent extends keyof TEvents>(event: TEvent, subscriber: Subscriber<TEvents[TEvent]>): void;
 
   /** @protected */
-  publish<TEvent extends keyof TEvents, TData extends TEvents[TEvent]>(event: TEvent, data: TData): void;
+  publish<TEvent extends keyof TEvents>(event: TEvent, data: TEvents[TEvent]): void;
 }

@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Constructor<TInstance extends object = object, TArgs extends [] = any> = abstract new (...args: TArgs) => TInstance;
 
-export type ClassDecorator<TConstructor extends Constructor, TOutput extends TConstructor | void = TConstructor | void> = (
+export type ClassDecorator<TConstructor extends Constructor, TOutput extends TConstructor | undefined = undefined> = (
   Target: TConstructor,
   context: ClassDecoratorContext<TConstructor>,
 ) => TOutput;
