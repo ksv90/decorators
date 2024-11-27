@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/ksv90/decorators/compare/v0.4.0...v0.4.1) (2024-11-27)
+
+
+### Bug Fixes
+
+* tools pack added ([a30d08a](https://github.com/ksv90/decorators/commit/a30d08a82929eb352e3f346745a599a94f222ed6))
+
 ## [0.4.0](https://github.com/ksv90/decorators/compare/v0.3.2...v0.4.0) (2024-11-05)
 
 
