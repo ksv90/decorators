@@ -45,15 +45,21 @@ describe('storer base', () => {
     const [v1, v2, v3] = [1, 2, 3];
     storage.set('balance', v1);
     expect(storage.get('balance')).toBe(v1);
-    expect(() => storage.set('balance', v2)).not.throw();
+    expect(() => {
+      storage.set('balance', v2);
+    }).not.throw();
     expect(storage.get('balance')).toBe(v2);
-    expect(() => storage.set('balance', v3, true)).not.throw();
+    expect(() => {
+      storage.set('balance', v3, true);
+    }).not.throw();
     expect(storage.get('balance')).toBe(v3);
   });
 
   it<Context>('должен выбрасывать ошибку, если была попытка сохранить данные c false флагом для force', ({ storage }) => {
     storage.set('balance', 42);
-    expect(() => storage.set('balance', 42, false)).toThrow('the store already contains data for the key balance');
+    expect(() => {
+      storage.set('balance', 42, false);
+    }).toThrow('the store already contains data for the key balance');
   });
 
   it<Context>('должен возвращать наличие или отсутствие данных по ключу', ({ storage }) => {

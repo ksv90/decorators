@@ -20,14 +20,11 @@ describe('emitter main', () => {
     const t1 = new T1();
     const t2 = new T2();
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(t1.addListener).toEqual(t2.addListener);
+    expect(void t1.addListener).toEqual(void t2.addListener);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(t1.removeListener).toEqual(t2.removeListener);
+    expect(void t1.removeListener).toEqual(void t2.removeListener);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(t1.emit).toEqual(t2.emit);
+    expect(void t1.emit).toEqual(void t2.emit);
   });
 
   it('должен иметь свою карту с обработчиками', () => {
@@ -46,7 +43,7 @@ describe('emitter main', () => {
     const t1 = new T1();
     const t2 = new T2();
 
-    function listener() {}
+    const listener = () => undefined;
 
     t1.addListener('balance', listener);
 
@@ -89,12 +86,11 @@ describe('emitter main', () => {
   });
 
   it('должен иметь общие функции на прототипе', () => {
-    interface IEvents {}
-    interface EventEmitter1 extends IEmitter<IEvents> {}
+    interface EventEmitter1 extends IEmitter<object> {}
     @Emitter()
     class EventEmitter1 {}
     const emitter1 = new EventEmitter1();
-    interface EventEmitter2 extends IEmitter<IEvents> {}
+    interface EventEmitter2 extends IEmitter<object> {}
     @Emitter()
     class EventEmitter2 {}
     const emitter2 = new EventEmitter2();

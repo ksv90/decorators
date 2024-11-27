@@ -98,7 +98,8 @@ describe('storer advanced', () => {
     expect(storage2.get('nested')?.value).toBe(value);
     expect(store.nested.value).toBe(value + 1);
     const savedNested = storage1.get('nested');
-    expect(savedNested).not.undefined;
+    expect(savedNested).not.toBe(undefined);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     savedNested!.value += 1;
     expect(storage1.get('nested')?.value).toBe(value + 1);
     expect(storage2.get('nested')?.value).toBe(value);

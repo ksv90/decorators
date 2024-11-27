@@ -43,7 +43,7 @@ export const Broadcaster = <TEvents extends object, TConstructor extends Constru
         listeners?.delete(subscriber);
       }
 
-      publish<TEvent extends keyof TEvents, TData extends TEvents[TEvent]>(event: TEvent, data: TData): void {
+      publish<TEvent extends keyof TEvents>(event: TEvent, data: TEvents[TEvent]): void {
         this.#broadcastChannel.postMessage({ event, data });
         this.#listener({ data: { event, data } });
       }
