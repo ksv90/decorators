@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/ksv90/decorators/compare/v0.4.1...v0.4.2) (2025-02-04)
+
+
+### Bug Fixes
+
+* lite type added ([c15aae3](https://github.com/ksv90/decorators/commit/c15aae3f71c32948d7442b80211bdd77e1fd3b9d))
+
 ## [0.4.1](https://github.com/ksv90/decorators/compare/v0.4.0...v0.4.1) (2024-11-27)
 
 
