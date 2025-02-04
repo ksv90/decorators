@@ -44,3 +44,21 @@ export interface IEmitter<TEvents extends EventMap<TEvents>> {
   ): this;
   off<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEventName, TEvents[TEventName]>): this;
 }
+
+export interface IEmitterLite<TEvents extends EventMap<TEvents>> {
+  hasListener<TEventName extends keyof TEvents>(name: TEventName, listener: Listener<TEventName, TEvents[TEventName]>): boolean;
+  removeAllListeners(eventName?: keyof TEvents): this;
+  getListenersByName<TEventName extends keyof TEvents>(eventName: TEventName): Array<Listener<TEventName, TEvents[TEventName]>>;
+  getEventNames<TEventName extends keyof TEvents>(): TEventName[];
+  on<TEventName extends keyof TEvents>(
+    eventName: TEventName,
+    listener: Listener<TEventName, TEvents[TEventName]>,
+    options?: Omit<ListenerOptions<TEvents[TEventName]>, 'once'>,
+  ): this;
+  once<TEventName extends keyof TEvents>(
+    eventName: TEventName,
+    listener: Listener<TEventName, TEvents[TEventName]>,
+    options?: Omit<ListenerOptions<TEvents[TEventName]>, 'once'>,
+  ): this;
+  off<TEventName extends keyof TEvents>(eventName: TEventName, listener: Listener<TEventName, TEvents[TEventName]>): this;
+}
