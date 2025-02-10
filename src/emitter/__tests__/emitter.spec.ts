@@ -210,4 +210,27 @@ describe('Emitter', () => {
     testEmitter.emit('eventTwo', 2);
     expect(value).toBe(8);
   });
+
+  it<Context>('должен перезаписывать обработчик, если указан другой приоритет', ({ testEmitter }) => {
+    let value = 2;
+
+    const clear = () => {
+      testEmitter.removeAllListeners();
+      value = 2;
+    };
+
+    const multiply = (data: number) => (value *= data);
+
+    testEmitter.on('eventTwo', multiply, { priority: 'low' });
+    testEmitter.on('eventTwo', multiply, { priority: 'medium' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(4);
+
+    clear();
+    testEmitter.on('eventTwo', multiply, { priority: 'high' });
+    testEmitter.on('eventTwo', multiply, { priority: 'low' });
+    testEmitter.on('eventTwo', (data) => (value += data), { priority: 'medium' });
+    testEmitter.emit('eventTwo', 2);
+    expect(value).toBe(8);
+  });
 });
