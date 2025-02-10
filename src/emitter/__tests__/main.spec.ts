@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { MEDIUM_PRIORITY } from '../constants';
 import { Emitter } from '../emitter';
 import { IEmitter } from '../types';
 
@@ -97,5 +98,44 @@ describe('emitter main', () => {
     expect(void emitter1.addListener).toEqual(void emitter2.addListener);
     expect(void emitter1.removeListener).toEqual(void emitter2.removeListener);
     expect(void emitter1.emit).toEqual(void emitter2.emit);
+  });
+
+  it('должен иметь информацию о вызове', async () => {
+    interface IEvents {
+      balance: [number];
+    }
+
+    interface EventEmitter extends IEmitter<IEvents> {}
+    @Emitter()
+    class EventEmitter {}
+
+    await new Promise<void>((resolve) => {
+      const emitter = new EventEmitter();
+      emitter.on('balance', function (value) {
+        expect(value).toBeTypeOf('number');
+        expect(this.priority).toEqual(MEDIUM_PRIORITY);
+        resolve();
+      });
+
+      emitter.emit('balance', 1);
+    });
+
+    await new Promise<void>((resolve) => {
+      interface Context {
+        data: number;
+      }
+      const context = { data: 2 } satisfies Context;
+      const emitter = new EventEmitter();
+
+      function listener(this: { context?: Context }, value: number) {
+        const { data } = this.context ?? {};
+        expect(data).toEqual(value);
+        resolve();
+      }
+
+      emitter.on('balance', listener, { context });
+
+      emitter.emit('balance', context.data);
+    });
   });
 });
