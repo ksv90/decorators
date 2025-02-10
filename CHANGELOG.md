@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/ksv90/decorators/compare/v0.4.2...v0.5.0) (2025-02-10)
+
+
+### Features
+
+* emitter info added ([dbc50f1](https://github.com/ksv90/decorators/commit/dbc50f1634c388b6b111562aff533c532156e95f))
+
 ## [0.4.2](https://github.com/ksv90/decorators/compare/v0.4.1...v0.4.2) (2025-02-04)
 
 
