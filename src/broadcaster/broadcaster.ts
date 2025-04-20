@@ -1,59 +1,41 @@
 import { ClassDecorator, Constructor } from '../types';
-import { IBroadcaster, Subscriber } from './types';
+import { closeBroadcastChannel, getBroadcasterDataByTarget, publish, subscribe, unsubscribe } from './methods';
+import { IBroadcaster } from './types';
 
 export const Broadcaster = <TEvents extends object, TConstructor extends Constructor>(
   name: string,
 ): ClassDecorator<TConstructor, TConstructor & Constructor<IBroadcaster<TEvents>>> => {
   return (Target) => {
+    interface BroadcasterMixin extends IBroadcaster<TEvents> {}
     abstract class BroadcasterMixin extends Target implements IBroadcaster<TEvents> {
-      readonly #subscriberMap = new Map<keyof TEvents, Set<Subscriber>>();
-
-      readonly #broadcastChannel = new BroadcastChannel(name);
-
-      readonly #listener = (ctx: { data: { event: keyof TEvents; data: unknown } }) => {
-        const { event, data } = ctx.data;
-        const subscribers = this.#subscriberMap.get(event);
-        subscribers?.forEach((subscriber) => {
-          subscriber(data);
-        });
-      };
-
-      // open issue https://github.com/microsoft/TypeScript/issues/37142
-      // constructor(...args: ConstructorParameters<TConstructor>)
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       constructor(...args: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         super(...args);
 
-        this.#broadcastChannel.addEventListener('message', this.#listener);
-      }
+        const broadcastChannel = new BroadcastChannel(name);
+        const broadcasterData = getBroadcasterDataByTarget(this);
 
-      subscribe<TEvent extends keyof TEvents>(event: TEvent, subscriber: Subscriber<TEvents[TEvent]>): void {
-        let subscribers = this.#subscriberMap.get(event);
-        if (!subscribers) {
-          subscribers = new Set<Subscriber>();
-          this.#subscriberMap.set(event, subscribers);
+        broadcasterData.broadcastChannel = broadcastChannel;
+
+        broadcastChannel.addEventListener('message', broadcasterData.listener);
+
+        for (const data of broadcasterData.queue) {
+          broadcastChannel.postMessage(data);
+          broadcasterData.listener({ data });
         }
-        subscribers.add(subscriber);
-      }
 
-      unsubscribe<TEvent extends keyof TEvents>(event: TEvent, subscriber: Subscriber<TEvents[TEvent]>): void {
-        const listeners = this.#subscriberMap.get(event);
-        listeners?.delete(subscriber);
-      }
-
-      publish<TEvent extends keyof TEvents>(event: TEvent, data: TEvents[TEvent]): void {
-        this.#broadcastChannel.postMessage({ event, data });
-        this.#listener({ data: { event, data } });
-      }
-
-      closeBroadcastChannel(): void {
-        this.#subscriberMap.clear();
-        this.#broadcastChannel.removeEventListener('message', this.#listener);
-        this.#broadcastChannel.close();
+        broadcasterData.queue.clear();
       }
     }
+
+    const broadcasterPrototype = BroadcasterMixin.prototype as BroadcasterMixin;
+    broadcasterPrototype.subscribe = subscribe;
+    broadcasterPrototype.unsubscribe = unsubscribe;
+    broadcasterPrototype.publish = publish;
+    broadcasterPrototype.closeBroadcastChannel = closeBroadcastChannel;
+
+    Object.defineProperty(BroadcasterMixin, 'name', { value: Target.name });
 
     return BroadcasterMixin;
   };
