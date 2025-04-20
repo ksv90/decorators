@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.1](https://github.com/ksv90/decorators/compare/v0.5.0...v0.5.1) (2025-04-20)
+
+
+### Bug Fixes
+
+* broadcaster method prototype changed ([41f015b](https://github.com/ksv90/decorators/commit/41f015bb95128c438a59d4a59d72357cc200f554))
+* broadcaster method prototype changed ([e4c4f91](https://github.com/ksv90/decorators/commit/e4c4f919b75248b79f38239b425561b5dd544e5b))
+
 ## [0.5.0](https://github.com/ksv90/decorators/compare/v0.4.2...v0.5.0) (2025-02-10)
 
 
