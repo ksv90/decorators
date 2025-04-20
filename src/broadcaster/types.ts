@@ -1,11 +1,17 @@
+export interface ListenerData<TEvents extends object, TEventName extends keyof TEvents> {
+  eventName: TEventName;
+  eventData: TEvents[TEventName];
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Subscriber<TEventData = any> = (data: TEventData) => void;
+export type Subscriber<TSubscriberData = any> = (data: TSubscriberData) => void;
 
 export interface IBroadcaster<TEvents extends object> {
-  subscribe<TEvent extends keyof TEvents>(event: TEvent, subscriber: Subscriber<TEvents[TEvent]>): void;
+  subscribe<TEventName extends keyof TEvents>(eventName: TEventName, subscriber: Subscriber<TEvents[TEventName]>): void;
 
-  unsubscribe<TEvent extends keyof TEvents>(event: TEvent, subscriber: Subscriber<TEvents[TEvent]>): void;
+  unsubscribe<TEventName extends keyof TEvents>(eventName: TEventName, subscriber: Subscriber<TEvents[TEventName]>): void;
 
-  /** @protected */
-  publish<TEvent extends keyof TEvents>(event: TEvent, data: TEvents[TEvent]): void;
+  publish<TEventName extends keyof TEvents>(eventName: TEventName, eventData: TEvents[TEventName]): void;
+
+  closeBroadcastChannel(): void;
 }
