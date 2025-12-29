@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2](https://github.com/ksv90/decorators/compare/v0.5.1...v0.5.2) (2025-12-29)
+
+
+### Bug Fixes
+
+* publish ([2df58c5](https://github.com/ksv90/decorators/commit/2df58c5450729968648292407b7abd4d75626624))
+* publish ([8e4dbdf](https://github.com/ksv90/decorators/commit/8e4dbdf579077af6a2e43cd8d30eafb30fa05135))
+
 ## [0.5.1](https://github.com/ksv90/decorators/compare/v0.5.0...v0.5.1) (2025-04-20)
 
 
