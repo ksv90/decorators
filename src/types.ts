@@ -9,4 +9,5 @@ export type ClassDecorator<TConstructor extends Constructor, TOutput extends TCo
 export type AccessorDecorator<TThis, TValue> = (
   target: ClassAccessorDecoratorTarget<TThis, TValue>,
   context: ClassAccessorDecoratorContext<TThis, TValue>,
-) => ClassAccessorDecoratorResult<TThis, TValue>;
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+) => void | ClassAccessorDecoratorResult<TThis, TValue>;
