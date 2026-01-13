@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/ksv90/decorators/compare/v0.5.2...v0.6.0) (2026-01-13)
+
+
+### Features
+
+* accessors changed ([0a3a016](https://github.com/ksv90/decorators/commit/0a3a016f8a1108181e46932003a8bb1a32442b55))
+* accessors changed ([b7fdb83](https://github.com/ksv90/decorators/commit/b7fdb83e2f202fa488435eb68b0bb9c7f76b0736))
+
 ## [0.5.2](https://github.com/ksv90/decorators/compare/v0.5.1...v0.5.2) (2025-12-29)
 
 
